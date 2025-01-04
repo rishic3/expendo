@@ -1,6 +1,6 @@
 # expendo
 
-<img src="images/stupid_diagram.png" alt="drawing" width="400"/>
+<img src="images/dumb_diagram.png" alt="drawing" width="400"/>
 
 Automation tool to track my expenses.  
 
