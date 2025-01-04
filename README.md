@@ -1,4 +1,4 @@
-# fingal
+# expendo
 
 <img src="images/stupid_diagram.png" alt="drawing" width="400"/>
 
