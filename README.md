@@ -10,7 +10,7 @@ Parses credit card transaction history file, automatically infers expenditure ca
 
 ```shell
 cd python
-conda create -n fingal python=3.11 -y
+conda create -n expendo python=3.11 -y
 pip install -r requirements.txt
 ```
 
