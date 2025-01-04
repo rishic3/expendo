@@ -4,7 +4,7 @@
 
 Automation tool to track my expenses.  
 
-Parses credit card transaction history file, automatically infers expenditure categories based on the transaction metadata, and uses the Google API Client to update my expenses spreadsheet. 
+Parses credit card transaction history file, automatically infers expenditure categories based on the transaction metadata (text embedding similarity), and uses the Google API Client to update an expenses spreadsheet. 
 
 ## Usage
 
