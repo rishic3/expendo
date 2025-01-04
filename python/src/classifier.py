@@ -60,12 +60,13 @@ def embed_and_classify(
     low_conf = {}
     for i, similarities in enumerate(similarity_matrix):
         max_similarity = np.max(similarities)
+        best_match_index = np.argmax(similarities)
+        label = old_data.iloc[best_match_index][label_col]
         if max_similarity >= threshold:
-            best_match_index = np.argmax(similarities)
-            labels.append(old_data.iloc[best_match_index][label_col])
+            labels.append(label)
         else:
             labels.append(None)
-            low_conf[i] = new_data.iloc[i][feature_col]
+            low_conf[(i, max_similarity)] = (new_data.iloc[i][feature_col], label)
 
     new_data[label_col] = labels
 

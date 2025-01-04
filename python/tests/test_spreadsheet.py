@@ -7,7 +7,7 @@ from src.spreadsheet import SpreadSheet
 def sheet_id():
     """
     Test sheet:
-    [['September', '', '9/25/24', '2.5', 'Nvidia cafe', 'Meals'],
+    [['August', '', '8/4/24', '2.5', 'Nvidia cafe', 'Meals'],
      ['September', '', '9/25/24', '7.5', 'Nvidia cafe', 'Meals'],
      ['September', '', '9/26/24', '2.5', 'Nvidia cafe', 'Meals'],
      ['September', '', '9/26/24', '8.5', 'Nvidia cafe', 'Meals'],
@@ -25,7 +25,7 @@ def test_get_values(sheet_id: str) -> None:
 
     expected_df = pd.DataFrame(
         [
-            ["September", "", "9/25/24", "2.5", "Nvidia cafe", "Meals"],
+            ["August", "", "8/4/24", "2.5", "Nvidia cafe", "Meals"],
             ["September", "", "9/25/24", "7.5", "Nvidia cafe", "Meals"],
         ],
     )
@@ -38,7 +38,7 @@ def test_get_column(sheet_id: str) -> None:
     col_df = pd.DataFrame(spreadsheet.get_column("A"))
     expected_df = pd.DataFrame(
         [
-            ["September"],
+            ["August"],
             ["September"],
             ["September"],
             ["September"],
@@ -72,3 +72,7 @@ def test_append_and_clear(sheet_id: str) -> None:
 def test_get_latest_col_value(sheet_id: str) -> None:
     spreadsheet = SpreadSheet(sheet_id)
     assert spreadsheet.get_latest_col_value("A") == "October"
+
+def test_get_latest_col_index(sheet_id: str) -> None:
+    spreadsheet = SpreadSheet(sheet_id)
+    assert spreadsheet.get_latest_col_index("A") == 7

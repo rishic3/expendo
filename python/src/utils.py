@@ -1,4 +1,5 @@
 import os
+import pandas as pd
 from typing import List
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
@@ -33,3 +34,27 @@ def get_credentials(
             token.write(creds.to_json())
 
     return creds
+
+
+def get_latest_starting_month_idx(
+    date_col_df: pd.DataFrame, month: int, date_col: str
+) -> int:
+    """
+    Get the index of the first date in the latest instance of the given month.
+    """
+    date_col_df[date_col] = pd.to_datetime(date_col_df[date_col])
+    dates_months = date_col_df[date_col].dt.month
+    indices_of_month = dates_months[dates_months == month].index
+
+    last_index = indices_of_month[-1]
+    for idx in range(
+        last_index, -1, -1
+    ):  # Iterate backward to find the first in the block
+        if (
+            pd.isna(date_col_df.loc[idx, date_col])
+            or date_col_df.loc[idx, date_col].month == month
+        ):
+            continue
+        return idx + 1
+
+    raise ValueError("No valid index found.")
