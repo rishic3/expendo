@@ -1,14 +1,13 @@
-import pandas as pd
-from typing import List
+from typing import List, Union
 from src.utils import get_credentials
-from google.auth.transport.requests import Request
-from google.oauth2.credentials import Credentials
-from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build, Resource
 from googleapiclient.errors import HttpError
 
-
 class SpreadSheet:
+    """
+    SpreadSheet class to interact w/Google Sheets API.
+    """
+
     def __init__(self, spreadsheet_id: str):
         self.creds = get_credentials()
         self.spreadsheet_id = spreadsheet_id
@@ -17,15 +16,15 @@ class SpreadSheet:
     @property
     def service(self) -> Resource:
         """
-        Returns the service object.
+        Build and return the service object.
         """
         if self._service is None:
             self._service = build("sheets", "v4", credentials=self.creds)
         return self._service
 
-    def get_values(self, range_name: str) -> pd.DataFrame:
+    def get_values(self, range_name: str) -> List[List[Union[str, float]]]:
         """
-        Return values in range from spreadsheet as a Pandas DF.
+        Return values in range from spreadsheet.
         """
         try:
             service = self.service
@@ -35,23 +34,33 @@ class SpreadSheet:
                 .get(spreadsheetId=self.spreadsheet_id, range=range_name)
                 .execute()
             )
-            rows = result.get("values", [])
-            return pd.DataFrame(rows)
+            return result.get("values", [])
+        except HttpError as err:
+            raise Exception(f"HTTP Error occurred: {err}")
+
+    def get_column(self, col: str) -> List[List[str]]:
+        """
+        Return values in column from spreadsheet.
+        """
+        try:
+            range = f"{col}:{col}"
+            result = self.get_values(range)
+            return result
         except HttpError as err:
             raise Exception(f"HTTP Error occurred: {err}")
 
     def append_values(
         self,
-        values_df: pd.DataFrame,
+        values: List[List[Union[str, float]]],
         range_name: str,
         value_input_option: str = "USER_ENTERED",
-    ) -> dict:
+    ) -> None:
         """
         Appends values to the spreadsheet.
         """
         try:
             service = self.service
-            body = {"values": values_df.values.tolist()}
+            body = {"values": values}
             result = (
                 service.spreadsheets()
                 .values()
@@ -64,31 +73,38 @@ class SpreadSheet:
                 .execute()
             )
             print(f"{(result.get('updates').get('updatedCells'))} cells appended.")
-            return result
+            return
         except HttpError as err:
             raise Exception(f"HTTP Error occurred: {err}")
 
-    def get_last_populated_row(self, col: str) -> int:
+    def clear_values(self, range_name: str) -> None:
         """
-        Returns the last populated row in the specified column.
+        Clear values in range from spreadsheet.
         """
         try:
             service = self.service
-            col_range = f"{col}:{col}"
             result = (
                 service.spreadsheets()
                 .values()
-                .get(spreadsheetId=self.spreadsheet_id, range=col_range)
+                .clear(spreadsheetId=self.spreadsheet_id, range=range_name)
                 .execute()
             )
-            rows = result.get("values", [])
-            return len(rows)
+            print(f"Cleared range {result.get('clearedRange').split('!')[1]}.")
+            return
         except HttpError as err:
             raise Exception(f"HTTP Error occurred: {err}")
 
+    def get_latest_col_value(self, col: str) -> str:
+        """
+        Get latest (vertically lowest) value in column.
+        """
+        try:
+            col_result = self.get_column(col)
+            assert col_result, f"No values found in {col}."
+            return col_result[-1][0]
+        except HttpError as err:
+            raise Exception(f"HTTP Error occurred: {err}")
 
-if __name__ == "__main__":
-    sid = "1NONAyZN-DU7VyRR4ystC8rDZ0aBQsEU65kTJiesV-c0"
-    sheet = SpreadSheet(sid)
-    out_pdf = sheet.get_values("K1:L7")
-    print(out_pdf)
+    def compute_monthly_stats(self, month: str) -> None:
+        # TODO
+        return
