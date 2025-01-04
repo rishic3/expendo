@@ -151,7 +151,6 @@ class SpreadSheet:
         self,
         month: int,
         col_mapping: Dict[str, str],
-        total_col: str,
     ) -> None:
         """
         Add monthly stats to spreadsheet.
@@ -169,6 +168,8 @@ class SpreadSheet:
             cat_range = f"{col_mapping.get('category')}:{col_mapping.get('category')}"
 
             month_name = calendar.month_name[month]
+            total_col = col_mapping.get("total")
+            assert total_col, "Total column required for monthly stats."
             sum_total_col = chr(ord(total_col) + 1)
             sum_total_range = (
                 f"{sum_total_col}{add_at_idx}:{sum_total_col}{add_at_idx + 4}"

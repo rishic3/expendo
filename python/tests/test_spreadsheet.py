@@ -33,6 +33,7 @@ def test_get_values(sheet_id: str) -> None:
     assert isinstance(values_df, pd.DataFrame)
     assert pd.DataFrame.equals(values_df, expected_df)
 
+
 def test_get_column(sheet_id: str) -> None:
     spreadsheet = SpreadSheet(sheet_id)
     col_df = pd.DataFrame(spreadsheet.get_column("A"))
@@ -48,6 +49,7 @@ def test_get_column(sheet_id: str) -> None:
         ],
     )
     assert pd.DataFrame.equals(col_df, expected_df)
+
 
 def test_append_and_clear(sheet_id: str) -> None:
     spreadsheet = SpreadSheet(sheet_id)
@@ -69,9 +71,11 @@ def test_append_and_clear(sheet_id: str) -> None:
     values_df = pd.DataFrame(spreadsheet.get_values("A8:F9"))
     assert values_df.empty
 
+
 def test_get_latest_col_value(sheet_id: str) -> None:
     spreadsheet = SpreadSheet(sheet_id)
     assert spreadsheet.get_latest_col_value("A") == "October"
+
 
 def test_get_latest_col_index(sheet_id: str) -> None:
     spreadsheet = SpreadSheet(sheet_id)
