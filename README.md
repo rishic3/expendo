@@ -21,3 +21,9 @@ Expendo will cache the auth token on first sign-in.
 3. Upload transaction history as CSV.  
 
 4. Run `main.py`, or to run interactively, `main.ipynb`.
+
+## Todo:
+
+- More generalizable approach (lightweight web search?) to infer categories.
+- Auto-pull monthly transaction history somehow - Fidelity doesn't have a public API :(.
+- Annual summary - totals, spending trends, highest months, etc.
