@@ -1,4 +1,4 @@
-# expendo
+# expendo 🐍
 
 <img src="images/dumb_diagram.png" alt="drawing" width="400"/>
 
