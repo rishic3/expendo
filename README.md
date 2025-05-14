@@ -12,6 +12,7 @@ Parses credit card transaction history file, infers expenditure categories based
   ```shell
   cd python
   conda create -n expendo python=3.11 -y
+  conda activate expendo
   pip install -r requirements.txt
   ```
 

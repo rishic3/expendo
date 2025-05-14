@@ -5,25 +5,25 @@ from src.spreadsheet import SpreadSheet
 from src.classifier import *
 
 
-if __name__ == "__main__":
+def main():
     parser = argparse.ArgumentParser(
         prog="expendo", description="Process, categorize, and track your expenses."
     )
     parser.add_argument("path", type=str, help="Path to new transactions CSV.")
-    parser.add_argument("sheet_id", type=str, help="Google Sheet ID to update.")
+    parser.add_argument("--sheet-id", type=str, help="Google Sheet ID to update.")
     parser.add_argument(
-        "col_mappings",
+        "--col-mappings",
         type=dict,
         help="Mapping of (column, column_letter) for month, date, cost, description, and category. For monthly stats, also include totals.",
     )
     parser.add_argument(
-        "threshold",
+        "--threshold",
         type=float,
         default=0.75,
         help="Threshold for similarity classification.",
     )
     parser.add_argument(
-        "monthly_stats",
+        "--monthly-stats",
         type=int,
         default=None,
         help="Optional: month for which to add monthly stats to the sheet.",
@@ -72,3 +72,7 @@ if __name__ == "__main__":
         sheet.add_monthly_stats(
             args.monthly_stats, col_mappings, col_mappings.get("total")
         )
+
+
+if __name__ == "__main__":
+    main()

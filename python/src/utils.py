@@ -14,9 +14,9 @@ def get_credentials(
     """
     creds = None
 
-    # get abs paths
-    token_path = os.path.join(os.path.dirname(__file__), "auth/token.json")
-    creds_path = os.path.join(os.path.dirname(__file__), "auth/credentials.json")
+    # get abs paths from parent dir
+    token_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "auth/token.json")
+    creds_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "auth/credentials.json")
 
     if os.path.exists(token_path):
         creds = Credentials.from_authorized_user_file(token_path, SCOPES)
