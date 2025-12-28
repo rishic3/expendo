@@ -1,7 +1,5 @@
 # expendo 💸
 
-<img src="images/dumb_diagram.png" alt="drawing" width="800"/>
-
 Personal automation tool to track my expenses.  
 
 Parses credit card transaction history file, infers expenditure categories based on the transaction metadata (text embedding similarity based on description), and uses the Google API Client to update an expenses spreadsheet. 
