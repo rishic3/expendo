@@ -26,7 +26,13 @@ def main():
         "--monthly-stats",
         type=int,
         default=None,
-        help="Optional: month for which to add monthly stats to the sheet.",
+        help="Optional: month (1-12) for which to add monthly stats to the sheet.",
+    )
+    parser.add_argument(
+        "--stats-year",
+        type=int,
+        default=None,
+        help="Optional: year for monthly stats. If not specified, uses the latest instance of the month.",
     )
 
     args = parser.parse_args()
@@ -69,9 +75,7 @@ def main():
 
     # Add monthly stats
     if args.monthly_stats:
-        sheet.add_monthly_stats(
-            args.monthly_stats, col_mappings, col_mappings.get("total")
-        )
+        sheet.add_monthly_stats(args.monthly_stats, col_mappings, args.stats_year)
 
 
 if __name__ == "__main__":

@@ -16,8 +16,7 @@ Parses credit card transaction history file, infers expenditure categories based
   pip install -r requirements.txt
   ```
 
-2. For first time usage, retrieve `credentials.json` from the [Google Cloud console](https://console.cloud.google.com/apis/) > Credentials and upload to `python/auth/credentials.json`.  
-Expendo will cache the auth token on first sign-in.  
+2. For first time usage, create `credentials.json`. Navigate to: [Google Cloud console](https://console.cloud.google.com/apis/) > Credentials > Create credentials > OAuth client ID. Upload to `python/auth/credentials.json`. Expendo will cache the auth token on first sign-in.  
 
 3. Upload transaction history as CSV.  
 

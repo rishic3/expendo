@@ -1,7 +1,8 @@
 import calendar
 import pandas as pd
 from typing import List, Union, Dict
-from src.utils import get_credentials, get_latest_starting_month_idx
+from typing import Optional
+from src.utils import get_credentials, get_month_range
 from googleapiclient.discovery import build, Resource
 from googleapiclient.errors import HttpError
 
@@ -151,21 +152,38 @@ class SpreadSheet:
         self,
         month: int,
         col_mapping: Dict[str, str],
+        year: Optional[int] = None,
     ) -> None:
         """
         Add monthly stats to spreadsheet.
+
+        Args:
+            month: Month number (1-12)
+            col_mapping: Mapping of column names to column letters
+            year: Optional year to specify which month block to use.
+                  If None, uses the latest instance of the month.
         """
         try:
             date_col_df = pd.DataFrame(
                 self.get_column(col_mapping.get("date")), columns=["Date"]
             )
             date_col_df = date_col_df[1:]  # index will be off by 1
-            add_at_idx = get_latest_starting_month_idx(date_col_df, month, "Date") + 1
-            print(f"Found month entries starting at index {add_at_idx}.")
+            start_idx, end_idx = get_month_range(date_col_df, month, "Date", year)
+            # +1 to convert from 0-based df index to 1-based sheet row
+            add_at_idx = start_idx + 1
+            end_row = end_idx + 1
+            year_str = f" {year}" if year else ""
+            print(f"Found {calendar.month_name[month]}{year_str} entries in rows {add_at_idx} to {end_row}.")
 
-            mo_range = f"{col_mapping.get('month')}:{col_mapping.get('month')}"
-            cost_range = f"{col_mapping.get('cost')}:{col_mapping.get('cost')}"
-            cat_range = f"{col_mapping.get('category')}:{col_mapping.get('category')}"
+            mo_col = col_mapping.get("month")
+            cost_col = col_mapping.get("cost")
+            cat_col = col_mapping.get("category")
+
+            # Use bounded ranges (exactly this month's block)
+            # to avoid double-counting data from other instances of the same month
+            mo_range = f"{mo_col}{add_at_idx}:{mo_col}{end_row}"
+            cost_range = f"{cost_col}{add_at_idx}:{cost_col}{end_row}"
+            cat_range = f"{cat_col}{add_at_idx}:{cat_col}{end_row}"
 
             month_name = calendar.month_name[month]
             total_col = col_mapping.get("total")
@@ -181,19 +199,19 @@ class SpreadSheet:
                 ],
                 [
                     "Meals",
-                    f'=SUMIFS({cost_range}, {mo_range},  "{month_name}", {cat_range}, {total_col}{add_at_idx + 1})',
+                    f'=SUMIFS({cost_range}, {mo_range}, "{month_name}", {cat_range}, {total_col}{add_at_idx + 1})',
                 ],
                 [
                     "Other",
-                    f'=SUMIFS({cost_range}, {mo_range},  "{month_name}", {cat_range}, {total_col}{add_at_idx + 2})',
+                    f'=SUMIFS({cost_range}, {mo_range}, "{month_name}", {cat_range}, {total_col}{add_at_idx + 2})',
                 ],
                 [
                     "Clothing",
-                    f'=SUMIFS({cost_range}, {mo_range},  "{month_name}", {cat_range}, {total_col}{add_at_idx + 3})',
+                    f'=SUMIFS({cost_range}, {mo_range}, "{month_name}", {cat_range}, {total_col}{add_at_idx + 3})',
                 ],
                 [
                     "Relish",
-                    f'=SUMIFS({cost_range}, {mo_range},  "{month_name}", {cat_range}, {total_col}{add_at_idx + 4})',
+                    f'=SUMIFS({cost_range}, {mo_range}, "{month_name}", {cat_range}, {total_col}{add_at_idx + 4})',
                 ],
                 ["Total", f"=SUM({sum_total_range})"],
             ]
